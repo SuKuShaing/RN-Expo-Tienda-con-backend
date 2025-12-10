@@ -22,6 +22,10 @@ export default function RootLayout() {
         KanitThin: require("../assets/fonts/Kanit-Thin.ttf"),
     });
 
+    if (!loaded) {
+        return null;
+    }
+
     return (
         <ThemeProvider
             value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
