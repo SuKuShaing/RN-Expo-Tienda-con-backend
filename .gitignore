@@ -3,6 +3,9 @@
 # dependencies
 node_modules/
 
+# Personalizadas
+.env
+
 # Expo
 .expo/
 dist/
