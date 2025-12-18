@@ -1,5 +1,6 @@
 import { ThemedText } from "@/presentation/theme/components/themed-text";
 import ThemedButton from "@/presentation/theme/components/ThemedButton";
+import ThemedLink from "@/presentation/theme/components/ThemedLink";
 import ThemeTextInput from "@/presentation/theme/components/ThemeTextInput";
 import {
     KeyboardAvoidingView,
@@ -55,6 +56,9 @@ const LoginScreen = () => {
                     Ingresar
                 </ThemedButton>
 
+                {/* Spacer */}
+                <View style={{ marginTop: 50 }} />
+
                 {/* Enlace a registro */}
                 <View
                     style={{
@@ -64,12 +68,12 @@ const LoginScreen = () => {
                     }}
                 >
                     <ThemedText>¿No tienes cuenta?</ThemedText>
-                    {/* <ThemeLink
+                    <ThemedLink
                         href="/auth/register"
                         style={{ marginHorizontal: 5 }}
                     >
                         Crear Cuenta
-                    </ThemeLink> */}
+                    </ThemedLink>
                 </View>
             </ScrollView>
         </KeyboardAvoidingView>
