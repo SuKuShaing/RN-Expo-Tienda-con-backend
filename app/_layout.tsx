@@ -1,4 +1,5 @@
 import { useColorScheme } from "@/presentation/theme/hooks/use-color-scheme";
+import { useThemeColor } from "@/presentation/theme/hooks/use-theme-color";
 import {
     DarkTheme,
     DefaultTheme,
@@ -7,6 +8,7 @@ import {
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { View } from "react-native";
 import "react-native-reanimated";
 
 export const unstable_settings = {
@@ -15,6 +17,7 @@ export const unstable_settings = {
 
 export default function RootLayout() {
     const colorScheme = useColorScheme();
+    const backgroundColor = useThemeColor({}, "background");
 
     const [loaded] = useFonts({
         KanitRegular: require("../assets/fonts/Kanit-Regular.ttf"),
@@ -27,18 +30,20 @@ export default function RootLayout() {
     }
 
     return (
-        <ThemeProvider
-            value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-        >
-            <Stack
-                screenOptions={{
-                    headerShown: false,
-                }}
+        <View style={{ backgroundColor: backgroundColor, flex: 1 }}>
+            <ThemeProvider
+                value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
             >
-                {/* <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                <Stack
+                    screenOptions={{
+                        headerShown: false,
+                    }}
+                >
+                    {/* <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} /> */}
-            </Stack>
-            <StatusBar style="auto" />
-        </ThemeProvider>
+                </Stack>
+                <StatusBar style="auto" />
+            </ThemeProvider>
+        </View>
     );
 }
