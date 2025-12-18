@@ -1,3 +1,4 @@
+import { useColorScheme } from "@/presentation/theme/hooks/use-color-scheme";
 import { Ionicons } from "@expo/vector-icons";
 import { useRef, useState } from "react";
 import { StyleSheet, TextInput, TextInputProps, View } from "react-native";
@@ -13,6 +14,8 @@ const ThemeTextInput = ({ icon, ...rest }: Props) => {
 
     const [isActive, setIsActive] = useState(false);
     const inputRef = useRef<TextInput>(null);
+
+    const theme = useColorScheme() ?? "light";
 
     return (
         <View
@@ -33,7 +36,7 @@ const ThemeTextInput = ({ icon, ...rest }: Props) => {
             )}
             <TextInput
                 ref={inputRef}
-                placeholderTextColor="#5C5C5C"
+                placeholderTextColor={theme === "light" ? "#5C5C5C" : "gray"}
                 onFocus={() => setIsActive(true)}
                 onBlur={() => setIsActive(false)}
                 // onBlur es lo contrario a onFocus, es cuando pierde el foco

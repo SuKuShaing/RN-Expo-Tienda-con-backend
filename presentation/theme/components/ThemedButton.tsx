@@ -1,3 +1,4 @@
+import { useColorScheme } from "@/presentation/theme/hooks/use-color-scheme";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { Pressable, PressableProps, StyleSheet, Text } from "react-native";
@@ -16,7 +17,11 @@ const ThemedButton = ({
     ...rest
 }: Props) => {
     const primaryColor = useThemeColor({}, "primary");
-    const colorDeFondo = useThemeColor({}, "background");
+    const colorBackground = useThemeColor({}, "background");
+
+    const theme = useColorScheme() ?? "light";
+
+    const colorDeFondo = theme == "light" ? colorBackground : "white";
 
     return (
         <Pressable
