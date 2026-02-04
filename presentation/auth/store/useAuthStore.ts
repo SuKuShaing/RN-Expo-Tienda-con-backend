@@ -22,7 +22,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
     user: undefined,
 
     // Métodos (Actions en Zustand)
-    changeStatus: (token, user) => {
+    changeStatus: (token?: string, user?: User) => {
         if (!token || !user) {
             // sí no tenemos respuesta (nos llega un null) estás dos (token y user) no deberían existir
             set({
