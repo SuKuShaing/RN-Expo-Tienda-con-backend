@@ -8,6 +8,7 @@ const CheckAuthenticationLayout = () => {
     const { status, checkStatus } = useAuthStore();
     const backgroundColor = useThemeColor({}, "background");
 
+    // Antes de llegar al home (index.tsx) pasa por este _layout.tsx y verificamos el estado de autentificación del usuario
     useEffect(() => {
         checkStatus();
     }, []);
