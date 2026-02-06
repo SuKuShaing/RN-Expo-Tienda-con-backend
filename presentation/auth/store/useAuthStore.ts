@@ -1,5 +1,6 @@
 import { authCheckStatus, authLogin } from "@/core/auth/actions/auth-actions";
 import { User } from "@/core/auth/interface/user";
+import { SecureStorageAdapter } from "@/helpers/adapters/secure-storage.adapter";
 import { create } from "zustand";
 
 export type AuthStatus = "authenticated" | "unauthenticated" | "checking";
@@ -12,7 +13,7 @@ export interface AuthState {
     login: (email: string, password: string) => Promise<boolean>;
     checkStatus: () => Promise<void>;
     logout: () => Promise<void>;
-    changeStatus: (token?: string, user?: User) => boolean;
+    changeStatus: (token?: string, user?: User) => Promise<boolean>;
 }
 
 export const useAuthStore = create<AuthState>()((set, get) => ({
@@ -22,7 +23,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
     user: undefined,
 
     // Métodos (Actions en Zustand)
-    changeStatus: (token?: string, user?: User) => {
+    changeStatus: async (token?: string, user?: User) => {
         if (!token || !user) {
             // sí no tenemos respuesta (nos llega un null) estás dos (token y user) no deberían existir
             set({
@@ -31,13 +32,14 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
                 user: undefined,
             });
             // definimos ese estatus y el token y el user lo colocamos así por sí acaso tenían otro estado antes
-            // ToDo: llamar Logout
+
+            await SecureStorageAdapter.deleteItem("token");
             return false;
         }
 
         set({ status: "authenticated", token: token, user: user });
 
-        //ToDo: guardar el token en el secure storage
+        await SecureStorageAdapter.setItem("token", token); // aquí guardamos el token en el Secure Storage del dispositivo
 
         return true;
     },
@@ -54,7 +56,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
     },
 
     logout: async () => {
-        // ToDO: clear token del secure storage
+        SecureStorageAdapter.deleteItem("token");
 
         set({ status: "unauthenticated", token: undefined, user: undefined });
     },
