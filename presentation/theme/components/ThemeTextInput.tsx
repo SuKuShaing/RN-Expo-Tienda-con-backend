@@ -24,6 +24,7 @@ const ThemeTextInput = ({ icon, ...rest }: Props) => {
                 // ToDo: cambiar si tiene el foco el input
                 borderColor: isActive ? primaryColor : "#ccc",
             }}
+            // esta siguiente linea es para que el input tenga el foco cuando se toca el borde el view
             onTouchStart={() => inputRef.current?.focus()}
         >
             {icon && (

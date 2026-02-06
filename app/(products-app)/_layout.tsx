@@ -40,6 +40,8 @@ const CheckAuthenticationLayout = () => {
                 headerStyle: {
                     backgroundColor: backgroundColor,
                 },
+                // Es un objeto de estilos que se aplica al contenedor de la pantalla (donde se renderiza el contenido de tus rutas, como el index.tsx).
+                // Si no defines esto, podrías ver un color blanco por defecto (o el del sistema) "detrás" de tus componentes, lo cual rompería la estética si tu aplicación tiene un tema oscuro o un color personalizado.
                 contentStyle: {
                     backgroundColor: backgroundColor,
                 },
