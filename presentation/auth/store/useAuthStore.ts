@@ -1,4 +1,8 @@
-import { authCheckStatus, authLogin } from "@/core/auth/actions/auth-actions";
+import {
+    authCheckStatus,
+    authLogin,
+    authRegister,
+} from "@/core/auth/actions/auth-actions";
 import { User } from "@/core/auth/interface/user";
 import { SecureStorageAdapter } from "@/helpers/adapters/secure-storage.adapter";
 import { create } from "zustand";
@@ -10,6 +14,11 @@ export interface AuthState {
     token?: string;
     user?: User;
 
+    register: (
+        fullname: string,
+        email: string,
+        password: string,
+    ) => Promise<boolean>;
     login: (email: string, password: string) => Promise<boolean>;
     checkStatus: () => Promise<void>;
     logout: () => Promise<void>;
@@ -42,6 +51,12 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
         await SecureStorageAdapter.setItem("token", token); // aquí guardamos el token en el Secure Storage del dispositivo
 
         return true;
+    },
+
+    register: async (fullname, email, password) => {
+        const resp = await authRegister(fullname, email, password);
+
+        return get().changeStatus(resp?.token, resp?.user);
     },
 
     login: async (email, password) => {
