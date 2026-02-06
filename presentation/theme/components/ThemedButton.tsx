@@ -33,6 +33,7 @@ const ThemedButton = ({
                 },
                 styles.button,
             ]}
+            {...rest} // es importante para que se pasen el resto de propiedades al botón (Pressable)
         >
             {icon && iconOrientation == "left" && (
                 <Ionicons
