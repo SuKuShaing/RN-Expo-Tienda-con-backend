@@ -5,6 +5,7 @@ import {
     DefaultTheme,
     ThemeProvider,
 } from "@react-navigation/native";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -14,6 +15,14 @@ import "react-native-reanimated";
 export const unstable_settings = {
     anchor: "(tabs)",
 };
+
+const queryClient = new QueryClient({
+    defaultOptions: {
+        queries: {
+            retry: false, // Para que reintente sí falla la petición, se le puede colocar un número que indique la cantidad de veces
+        },
+    },
+});
 
 export default function RootLayout() {
     const colorScheme = useColorScheme();
@@ -31,19 +40,21 @@ export default function RootLayout() {
 
     return (
         <View style={{ backgroundColor: backgroundColor, flex: 1 }}>
-            <ThemeProvider
-                value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-            >
-                <Stack
-                    screenOptions={{
-                        headerShown: false,
-                    }}
+            <QueryClientProvider client={queryClient}>
+                <ThemeProvider
+                    value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
                 >
-                    {/* <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                    <Stack
+                        screenOptions={{
+                            headerShown: false,
+                        }}
+                    >
+                        {/* <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} /> */}
-                </Stack>
-                <StatusBar style="auto" />
-            </ThemeProvider>
+                    </Stack>
+                    <StatusBar style="auto" />
+                </ThemeProvider>
+            </QueryClientProvider>
         </View>
     );
 }
