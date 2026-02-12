@@ -1,20 +1,62 @@
+import { useProduct } from "@/presentation/products/hooks/useProduct";
 import { ThemedView } from "@/presentation/theme/components/themed-view";
 import ThemeTextInput from "@/presentation/theme/components/ThemeTextInput";
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "expo-router";
+import { Redirect, useLocalSearchParams, useNavigation } from "expo-router";
 import { useEffect } from "react";
-import { KeyboardAvoidingView, Platform, ScrollView } from "react-native";
+import {
+    ActivityIndicator,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView,
+    View,
+} from "react-native";
 
 const ProductScreen = () => {
+    const { id } = useLocalSearchParams();
     const navigation = useNavigation(); // son las opciones de la cabecera
 
-    useEffect(() => {
-        // ToDo: colocar el nombre del producto
+    const { productQuery } = useProduct(`${id}`);
 
+    // Coloca el icono de la cámara en la esquina
+    useEffect(() => {
         navigation.setOptions({
             headerRight: () => <Ionicons name="camera-outline" size={25} />,
         });
     }, []);
+
+    // Coloca el nombre del producto
+    useEffect(() => {
+        if (productQuery.data) {
+            navigation.setOptions({
+                title: productQuery.data.title,
+            });
+        }
+    }, [productQuery.data]);
+
+    if (productQuery.isLoading) {
+        return (
+            <View
+                style={{
+                    flex: 1,
+                    justifyContent: "center",
+                    alignItems: "center",
+                }}
+            >
+                <ActivityIndicator size={30} />
+            </View>
+        );
+    }
+
+    if (!productQuery.data) {
+        return <Redirect href="/(products-app)/(home)" />;
+    }
+
+    const product = productQuery.data!;
+    /*  Ese signo de exclamación (!) se llama Non-null assertion operator (operador de aserción de no nulo) en TypeScript.
+        ¿Qué hace?
+        Le dice a TypeScript: "Confía en mí, sé que esta variable no es null ni undefined, aunque tú creas que podría serlo". Básicamente, "fuerza" al compilador a tratar la variable como si siempre tuviera un valor.
+        ojo, aquí funciona puesto que sí no hay datos es redirigido el home, hay que estar seguró de que habrán datos para usarlo */
 
     return (
         <KeyboardAvoidingView

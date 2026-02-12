@@ -55,6 +55,16 @@ const CheckAuthenticationLayout = () => {
                     headerLeft: () => <LogoutIconButton />,
                 }}
             />
+
+            <Stack.Screen
+                name="product/[id]"
+                // con esta línea de name="product/[id]" el nombre del producto ya está cargado al seleccionar un producto en especial
+                // evitando que diga producto y después cambié con el effect al nombre del producto
+                options={{
+                    title: "Producto",
+                    // nombre por defecto para que no se vea name="product/[id]"
+                }}
+            />
         </Stack>
     );
 };
