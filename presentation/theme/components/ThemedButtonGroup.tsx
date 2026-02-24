@@ -33,7 +33,7 @@ const ThemedButtonGroup = ({ options, selectedOption, onSelect }: Props) => {
                                 style.selectedButtonText,
                         ]}
                     >
-                        {option}
+                        {option[0].toLocaleUpperCase() + option.slice(1)}
                     </Text>
                 </TouchableOpacity>
             ))}

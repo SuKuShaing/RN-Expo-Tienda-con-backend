@@ -1,6 +1,7 @@
 import ProductImages from "@/presentation/products/components/ProductImages";
 import { useProduct } from "@/presentation/products/hooks/useProduct";
 import { ThemedView } from "@/presentation/theme/components/themed-view";
+import ThemedButton from "@/presentation/theme/components/ThemedButton";
 import ThemedButtonGroup from "@/presentation/theme/components/ThemedButtonGroup";
 import ThemeTextInput from "@/presentation/theme/components/ThemeTextInput";
 import { Ionicons } from "@expo/vector-icons";
@@ -104,7 +105,29 @@ const ProductScreen = () => {
                         selectedOption={product.sizes}
                         onSelect={(options) => console.log({ options })}
                     />
+                    <ThemedButtonGroup
+                        options={["kid", "men", "woman", "unisex"]}
+                        selectedOption={[product.gender]}
+                        onSelect={(options) => console.log({ options })}
+                    />
                 </ThemedView>
+
+                {/* Botón para guardar */}
+
+                <View
+                    style={{
+                        marginHorizontal: 10,
+                        marginBottom: 50,
+                        marginTop: 20,
+                    }}
+                >
+                    <ThemedButton
+                        icon="save-outline"
+                        onPress={() => console.log("Guardar")}
+                    >
+                        Guardar
+                    </ThemedButton>
+                </View>
             </ScrollView>
         </KeyboardAvoidingView>
     );
