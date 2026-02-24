@@ -21,7 +21,7 @@ const ProductScreen = () => {
     const { id } = useLocalSearchParams();
     const navigation = useNavigation(); // son las opciones de la cabecera
 
-    const { productQuery } = useProduct(`${id}`);
+    const { productQuery, productMutation } = useProduct(`${id}`);
 
     // Coloca el icono de la cámara en la esquina
     useEffect(() => {
@@ -66,7 +66,8 @@ const ProductScreen = () => {
     return (
         <Formik
             initialValues={product}
-            onSubmit={(productLike) => console.log({ productLike })}
+            // onSubmit={(productLike) => productMutation.mutate(productLike)} // ambos debiesen funcionar igual
+            onSubmit={productMutation.mutate}
         >
             {({ values, handleSubmit, handleChange, setFieldValue }) => (
                 <KeyboardAvoidingView
@@ -164,7 +165,7 @@ const ProductScreen = () => {
                         >
                             <ThemedButton
                                 icon="save-outline"
-                                onPress={() => console.log("Guardar")}
+                                onPress={() => handleSubmit()}
                             >
                                 Guardar
                             </ThemedButton>
