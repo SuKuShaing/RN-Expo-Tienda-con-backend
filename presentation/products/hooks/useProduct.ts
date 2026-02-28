@@ -1,7 +1,8 @@
 import { updateCreateProduct } from "@/core/products/actions/create-update-product.action";
 import { getProductById } from "@/core/products/actions/get-products-by-id.action";
 import { Product } from "@/core/products/interface/producto.interface";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useRef } from "react";
 import { Alert } from "react-native";
 
 /**
@@ -12,6 +13,13 @@ import { Alert } from "react-native";
  * @returns
  */
 export const useProduct = (productId: string) => {
+    const queryClient = useQueryClient();
+
+    // usamos productIdRef para Mantener la identidad del producto: si es 'new' se actualiza con el ID real tras el primer guardado.
+    // Esto permite que el formulario pase de modo "Crear" a "Actualizar" automáticamente,
+    // evitando duplicados en guardados posteriores y sin disparar re-renders innecesarios.
+    const productIdRef = useRef(productId);
+
     // useQuery es para los Get, se ejecuta automáticamente
     const productQuery = useQuery({
         queryKey: ["product", productId],
@@ -22,10 +30,19 @@ export const useProduct = (productId: string) => {
     // Mutación
     // useMutation es para los Post, Put, Delete y Patch, se ejecuta manualmente
     const productMutation = useMutation({
-        mutationFn: async (data: Product) => updateCreateProduct(data),
+        mutationFn: async (data: Product) =>
+            updateCreateProduct({ ...data, id: productIdRef.current }),
 
         onSuccess: (data: Product) => {
-            // ToDo: Invalidar products Queries
+            productIdRef.current = data.id;
+
+            // Invalidar cache products Queries
+            queryClient.invalidateQueries({
+                queryKey: ["products", "infinite"],
+            });
+            queryClient.invalidateQueries({
+                queryKey: ["product", data.id],
+            });
 
             Alert.alert(
                 "Guardado Exitosamente",
