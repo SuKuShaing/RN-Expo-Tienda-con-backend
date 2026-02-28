@@ -1,3 +1,4 @@
+import { updateCreateProduct } from "@/core/products/actions/create-update-product.action";
 import { getProductById } from "@/core/products/actions/get-products-by-id.action";
 import { Product } from "@/core/products/interface/producto.interface";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -11,6 +12,7 @@ import { Alert } from "react-native";
  * @returns
  */
 export const useProduct = (productId: string) => {
+    // useQuery es para los Get, se ejecuta automáticamente
     const productQuery = useQuery({
         queryKey: ["product", productId],
         queryFn: () => getProductById(productId),
@@ -18,13 +20,9 @@ export const useProduct = (productId: string) => {
     });
 
     // Mutación
+    // useMutation es para los Post, Put, Delete y Patch, se ejecuta manualmente
     const productMutation = useMutation({
-        mutationFn: async (data: Product) => {
-            // ToDo: disparar la acción de guardar
-            console.log({ data });
-
-            return data;
-        },
+        mutationFn: async (data: Product) => updateCreateProduct(data),
 
         onSuccess: (data: Product) => {
             // ToDo: Invalidar products Queries
@@ -33,6 +31,15 @@ export const useProduct = (productId: string) => {
                 "Guardado Exitosamente",
                 `"${data.title}" se guardó correctamente`,
             );
+        },
+
+        // Agregar esto:
+        onError: (error) => {
+            Alert.alert(
+                "Error al guardar",
+                "Revisa que tengas permisos de administrador (Código 403)",
+            );
+            console.log("error: ", error);
         },
     });
 
