@@ -1,12 +1,17 @@
 import { Size } from "@/core/products/interface/producto.interface";
 import ProductImages from "@/presentation/products/components/ProductImages";
 import { useProduct } from "@/presentation/products/hooks/useProduct";
+import MenuIconBotton from "@/presentation/theme/components/MenuIconBotton";
 import { ThemedView } from "@/presentation/theme/components/themed-view";
 import ThemedButton from "@/presentation/theme/components/ThemedButton";
 import ThemedButtonGroup from "@/presentation/theme/components/ThemedButtonGroup";
 import ThemeTextInput from "@/presentation/theme/components/ThemeTextInput";
-import { Ionicons } from "@expo/vector-icons";
-import { Redirect, useLocalSearchParams, useNavigation } from "expo-router";
+import {
+    Redirect,
+    router,
+    useLocalSearchParams,
+    useNavigation,
+} from "expo-router";
 import { Formik } from "formik";
 import { useEffect } from "react";
 import {
@@ -26,7 +31,13 @@ const ProductScreen = () => {
     // Coloca el icono de la cámara en la esquina
     useEffect(() => {
         navigation.setOptions({
-            headerRight: () => <Ionicons name="camera-outline" size={25} />,
+            headerRight: () => (
+                <MenuIconBotton
+                    onPress={() => router.push("/camera")}
+                    // onPress={() => router.push("/camera/index")} // funciona solo sí se deja /camera, aunque marque error el sistema, ahí funciona
+                    icon="camera-outline"
+                />
+            ),
         });
     }, []);
 
