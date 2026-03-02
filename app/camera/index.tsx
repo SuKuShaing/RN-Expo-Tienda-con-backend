@@ -1,6 +1,8 @@
 import ThemedButton from "@/presentation/theme/components/ThemedButton";
 import { useThemeColor } from "@/presentation/theme/hooks/use-theme-color";
+import { Ionicons } from "@expo/vector-icons";
 import { CameraType, CameraView, useCameraPermissions } from "expo-camera";
+import { router } from "expo-router";
 import { useRef, useState } from "react";
 import {
     StyleSheet,
@@ -62,6 +64,11 @@ export default function CameraScreen() {
         // ToDo: guardar imagen
     };
 
+    const onReturnCancel = () => {
+        // ToDo: limpiar el estado
+        router.dismiss();
+    };
+
     function toggleCameraFacing() {
         setFacing((current) => (current === "back" ? "front" : "back"));
     }
@@ -70,6 +77,10 @@ export default function CameraScreen() {
         <View style={styles.container}>
             <CameraView ref={cameraRef} style={styles.camera} facing={facing} />
             <ShutterButton onPress={onShutterButtonPress} />
+            <FlipCameraButton onPress={toggleCameraFacing} />
+            {/* Galería de imagenes */}
+            {/* <GalleryButton onPress={} /> */}
+            <ReturnCancelButton onPress={onReturnCancel} />
 
             {/* <TouchableOpacity
                     style={styles.button}
@@ -99,6 +110,30 @@ const ShutterButton = ({ onPress = () => {} }) => {
                 },
             ]}
         ></TouchableOpacity>
+    );
+};
+
+const FlipCameraButton = ({ onPress = () => {} }) => {
+    return (
+        <TouchableOpacity onPress={onPress} style={styles.flipCameraButton}>
+            <Ionicons name="camera-reverse-outline" color="white" size={30} />
+        </TouchableOpacity>
+    );
+};
+
+const GalleryButton = ({ onPress = () => {} }) => {
+    return (
+        <TouchableOpacity onPress={onPress} style={styles.galleryButton}>
+            <Ionicons name="image-outline" color="white" size={30} />
+        </TouchableOpacity>
+    );
+};
+
+const ReturnCancelButton = ({ onPress = () => {} }) => {
+    return (
+        <TouchableOpacity onPress={onPress} style={styles.returnCancelButton}>
+            <Ionicons name="arrow-back-outline" color="white" size={30} />
+        </TouchableOpacity>
     );
 };
 
@@ -173,7 +208,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#17202A",
         position: "absolute",
         top: 40,
-        left: 32,
+        left: 22,
         justifyContent: "center",
         alignItems: "center",
     },
