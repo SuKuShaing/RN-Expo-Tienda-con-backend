@@ -2,9 +2,11 @@ import ThemedButton from "@/presentation/theme/components/ThemedButton";
 import { useThemeColor } from "@/presentation/theme/hooks/use-theme-color";
 import { Ionicons } from "@expo/vector-icons";
 import { CameraType, CameraView, useCameraPermissions } from "expo-camera";
+import * as MediaLibrary from "expo-media-library";
 import { router } from "expo-router";
 import { useRef, useState } from "react";
 import {
+    Alert,
     Image,
     StyleSheet,
     Text,
@@ -15,17 +17,50 @@ import {
 
 export default function CameraScreen() {
     const [facing, setFacing] = useState<CameraType>("back");
-    const [permission, requestPermission] = useCameraPermissions();
+    const [cameraPermission, requestCameraPermission] = useCameraPermissions();
+
+    const [mediaPermission, requestMediaPermission] =
+        MediaLibrary.usePermissions({
+            granularPermissions: ["photo", "video"],
+        });
+
     const [selectedImage, setSelectedImage] = useState<string>();
 
     const cameraRef = useRef<CameraView>(null);
 
-    if (!permission) {
+    const onRequestPermissions = async () => {
+        try {
+            const { status: cameraPermissionStatus } =
+                await requestCameraPermission();
+            if (cameraPermissionStatus !== "granted") {
+                Alert.alert(
+                    "Lo siento",
+                    "Necesitamos permiso a la cámara para tomar fotos",
+                );
+                return;
+            }
+
+            const { status: mediaPermissionStatus } =
+                await requestMediaPermission();
+            if (mediaPermissionStatus !== "granted") {
+                Alert.alert(
+                    "Lo siento",
+                    "Necesitamos permiso a la galería para guardar fotos",
+                );
+                return;
+            }
+        } catch (error) {
+            console.log(error);
+            Alert.alert("Error", "Algo salio mal con los permisos");
+        }
+    };
+
+    if (!cameraPermission) {
         // Camera permissions are still loading.
         return <View />;
     }
 
-    if (!permission.granted) {
+    if (!cameraPermission.granted) {
         // Camera permissions are not granted yet.
         return (
             <View
@@ -40,14 +75,9 @@ export default function CameraScreen() {
                     Se requieren los permisos para ocupar la cámara y la galería
                 </Text>
 
-                <ThemedButton onPress={requestPermission}>
+                <ThemedButton onPress={onRequestPermissions}>
                     Autorizar permiso
                 </ThemedButton>
-                {/* <TouchableOpacity onPress={requestPermission}>
-                    <ThemedText type="subtitle">Solicitar permiso</ThemedText>
-                </TouchableOpacity> */}
-
-                {/* <Button onPress={requestPermission} title="grant permission" /> */}
             </View>
         );
     }
@@ -72,8 +102,13 @@ export default function CameraScreen() {
         router.dismiss();
     };
 
-    const onPictureAccepted = () => {
-        // ToDo: implementar función
+    const onPictureAccepted = async () => {
+        if (!selectedImage) return;
+
+        // Sí existe la ruta de la foto, con la siguiente línea la guardamos en la galería de fotos
+        await MediaLibrary.createAssetAsync(selectedImage);
+
+        router.dismiss();
     };
 
     const onRetakePhoto = () => {
