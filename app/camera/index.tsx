@@ -5,6 +5,7 @@ import { CameraType, CameraView, useCameraPermissions } from "expo-camera";
 import { router } from "expo-router";
 import { useRef, useState } from "react";
 import {
+    Image,
     StyleSheet,
     Text,
     TouchableOpacity,
@@ -15,6 +16,7 @@ import {
 export default function CameraScreen() {
     const [facing, setFacing] = useState<CameraType>("back");
     const [permission, requestPermission] = useCameraPermissions();
+    const [selectedImage, setSelectedImage] = useState<string>();
 
     const cameraRef = useRef<CameraView>(null);
 
@@ -61,6 +63,7 @@ export default function CameraScreen() {
 
         if (!picture?.uri) return;
 
+        setSelectedImage(picture.uri);
         // ToDo: guardar imagen
     };
 
@@ -69,8 +72,27 @@ export default function CameraScreen() {
         router.dismiss();
     };
 
+    const onPictureAccepted = () => {
+        // ToDo: implementar función
+    };
+
+    const onRetakePhoto = () => {
+        setSelectedImage(undefined);
+    };
+
     function toggleCameraFacing() {
         setFacing((current) => (current === "back" ? "front" : "back"));
+    }
+
+    if (selectedImage) {
+        return (
+            <View style={styles.container}>
+                <Image source={{ uri: selectedImage }} style={styles.camera} />
+                <ConfirmImageButton onPress={onPictureAccepted} />
+                <RetakeImageButton onPress={onRetakePhoto} />
+                <ReturnCancelButton onPress={onReturnCancel} />
+            </View>
+        );
     }
 
     return (
@@ -79,7 +101,7 @@ export default function CameraScreen() {
             <ShutterButton onPress={onShutterButtonPress} />
             <FlipCameraButton onPress={toggleCameraFacing} />
             {/* Galería de imagenes */}
-            {/* <GalleryButton onPress={} /> */}
+            <GalleryButton onPress={() => console.log("botón galería")} />
             <ReturnCancelButton onPress={onReturnCancel} />
 
             {/* <TouchableOpacity
@@ -137,6 +159,37 @@ const ReturnCancelButton = ({ onPress = () => {} }) => {
     );
 };
 
+const ConfirmImageButton = ({ onPress = () => {} }) => {
+    const dimensions = useWindowDimensions();
+    const primaryColor = useThemeColor({}, "primary");
+
+    return (
+        <TouchableOpacity
+            onPress={onPress}
+            style={[
+                styles.shutterButton,
+                {
+                    position: "absolute",
+                    bottom: 30,
+                    left: dimensions.width / 2 - 32,
+                    borderColor: primaryColor,
+                },
+            ]}
+        >
+            <Ionicons name="checkmark-outline" size={30} color={primaryColor} />
+        </TouchableOpacity>
+    );
+};
+
+const RetakeImageButton = ({ onPress = () => {} }) => {
+    return (
+        <TouchableOpacity onPress={onPress} style={styles.flipCameraButton}>
+            <Ionicons name="close-outline" color="white" size={30} />
+        </TouchableOpacity>
+    );
+};
+
+//Estilos
 const styles = StyleSheet.create({
     container: {
         flex: 1,
