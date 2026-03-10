@@ -24,6 +24,8 @@ import {
 } from "react-native";
 
 const ProductScreen = () => {
+    const { addSelectedImage } = useCameraStore();
+
     const { selectedImages, clearImages } = useCameraStore();
 
     const { id } = useLocalSearchParams();

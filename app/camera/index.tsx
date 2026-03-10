@@ -3,6 +3,7 @@ import ThemedButton from "@/presentation/theme/components/ThemedButton";
 import { useThemeColor } from "@/presentation/theme/hooks/use-theme-color";
 import { Ionicons } from "@expo/vector-icons";
 import { CameraType, CameraView, useCameraPermissions } from "expo-camera";
+import * as ImagePicker from "expo-image-picker";
 import * as MediaLibrary from "expo-media-library";
 import { router } from "expo-router";
 import { useRef, useState } from "react";
@@ -17,7 +18,7 @@ import {
 } from "react-native";
 
 export default function CameraScreen() {
-    const { selectedImages, addSelectedImage } = useCameraStore();
+    const { addSelectedImage } = useCameraStore();
 
     const [facing, setFacing] = useState<CameraType>("back");
     const [cameraPermission, requestCameraPermission] = useCameraPermissions();
@@ -121,6 +122,26 @@ export default function CameraScreen() {
         setSelectedImage(undefined);
     };
 
+    const onPickImages = async () => {
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ["images", "videos"],
+            quality: 0.5,
+            aspect: [4, 3],
+            // allowsEditing: true,
+            allowsMultipleSelection: true,
+            selectionLimit: 5,
+        });
+
+        if (result.canceled) return;
+
+        // console.log(result.assets);
+
+        result.assets.forEach((asset) => {
+            // Guardamos la imagen en el store de Zustand
+            addSelectedImage(asset.uri);
+        });
+    };
+
     function toggleCameraFacing() {
         setFacing((current) => (current === "back" ? "front" : "back"));
     }
@@ -142,7 +163,7 @@ export default function CameraScreen() {
             <ShutterButton onPress={onShutterButtonPress} />
             <FlipCameraButton onPress={toggleCameraFacing} />
             {/* Galería de imagenes */}
-            <GalleryButton onPress={() => console.log("botón galería")} />
+            <GalleryButton onPress={onPickImages} />
             <ReturnCancelButton onPress={onReturnCancel} />
 
             {/* <TouchableOpacity
