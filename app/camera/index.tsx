@@ -1,3 +1,4 @@
+import { useCameraStore } from "@/presentation/store/useCameraStore";
 import ThemedButton from "@/presentation/theme/components/ThemedButton";
 import { useThemeColor } from "@/presentation/theme/hooks/use-theme-color";
 import { Ionicons } from "@expo/vector-icons";
@@ -16,6 +17,8 @@ import {
 } from "react-native";
 
 export default function CameraScreen() {
+    const { selectedImages, addSelectedImage } = useCameraStore();
+
     const [facing, setFacing] = useState<CameraType>("back");
     const [cameraPermission, requestCameraPermission] = useCameraPermissions();
 
@@ -107,6 +110,9 @@ export default function CameraScreen() {
 
         // Sí existe la ruta de la foto, con la siguiente línea la guardamos en la galería de fotos
         await MediaLibrary.createAssetAsync(selectedImage);
+
+        // Guardamos la imagen en el store de Zustand
+        addSelectedImage(selectedImage);
 
         router.dismiss();
     };

@@ -1,6 +1,7 @@
 import { Size } from "@/core/products/interface/producto.interface";
 import ProductImages from "@/presentation/products/components/ProductImages";
 import { useProduct } from "@/presentation/products/hooks/useProduct";
+import { useCameraStore } from "@/presentation/store/useCameraStore";
 import MenuIconBotton from "@/presentation/theme/components/MenuIconBotton";
 import { ThemedView } from "@/presentation/theme/components/themed-view";
 import ThemedButton from "@/presentation/theme/components/ThemedButton";
@@ -23,10 +24,19 @@ import {
 } from "react-native";
 
 const ProductScreen = () => {
+    const { selectedImages, clearImages } = useCameraStore();
+
     const { id } = useLocalSearchParams();
     const navigation = useNavigation(); // son las opciones de la cabecera
 
     const { productQuery, productMutation } = useProduct(`${id}`);
+
+    //fn de limpieza, para sacar de memoria las fotos que se guardaron en zustand
+    useEffect(() => {
+        return () => {
+            clearImages();
+        };
+    }, []);
 
     // Coloca el icono de la cámara en la esquina
     useEffect(() => {
@@ -85,7 +95,9 @@ const ProductScreen = () => {
                     behavior={Platform.OS === "ios" ? "padding" : undefined}
                 >
                     <ScrollView>
-                        <ProductImages images={values.images} />
+                        <ProductImages
+                            images={[...product.images, ...selectedImages]}
+                        />
                         <ThemedView
                             style={{ marginHorizontal: 10, marginTop: 20 }}
                         >
