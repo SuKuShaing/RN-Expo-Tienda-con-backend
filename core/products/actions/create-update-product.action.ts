@@ -33,11 +33,29 @@ const prepareImages = async (images: string[]): Promise<string[]> => {
 
 /**
  * Carga las imágenes en el servidor
- * @param Image
+ * @param image
  * @returns
  */
-const uploadImage = async (Image: string): Promise<string> => {
-    return "";
+const uploadImage = async (image: string): Promise<string> => {
+    const formData = new FormData() as any;
+
+    formData.append("file", {
+        uri: image,
+        type: "image/jpeg",
+        name: image.split("/").pop(),
+    });
+
+    const { data } = await productsApi.post<{ image: string }>(
+        "/files/product",
+        formData,
+        {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        },
+    );
+
+    return data.image;
 };
 
 const updateProduct = async (product: Partial<Product>) => {
@@ -53,8 +71,17 @@ const updateProduct = async (product: Partial<Product>) => {
         });
 
         return data;
-    } catch (error) {
+    } catch (error: any) {
         console.log("🚀 ~ updateProduct ~ error:", error);
+
+        if (error.response) {
+            // Esto te dirá EXACTAMENTE qué endpoint falló (el PATCH de productos o el POST de la imagen)
+            console.log("Endpoint que falló:", error.config.url);
+            console.log("Status de rechazo:", error.response.status);
+            console.log("Mensaje del backend:", error.response.data);
+            console.log("Headers enviados:", error.config.headers); // Aquí verás si iba el Bearer token
+        }
+
         throw new Error("Error al actualizar el producto");
     }
 };
@@ -73,7 +100,7 @@ async function createProduct(product: Partial<Product>) {
 
         return data;
     } catch (error) {
-        console.log("🚀 ~ updateProduct ~ error:", error);
-        throw new Error("Error al actualizar el producto");
+        console.log("🚀 ~ createProduct ~ error:", error);
+        throw new Error("Error al crear el producto");
     }
 }

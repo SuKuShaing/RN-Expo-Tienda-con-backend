@@ -1,6 +1,7 @@
 import { updateCreateProduct } from "@/core/products/actions/create-update-product.action";
 import { getProductById } from "@/core/products/actions/get-products-by-id.action";
 import { Product } from "@/core/products/interface/producto.interface";
+import { useCameraStore } from "@/presentation/store/useCameraStore";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRef } from "react";
 import { Alert } from "react-native";
@@ -13,6 +14,8 @@ import { Alert } from "react-native";
  * @returns
  */
 export const useProduct = (productId: string) => {
+    const { clearImages } = useCameraStore();
+
     const queryClient = useQueryClient();
 
     // usamos productIdRef para Mantener la identidad del producto: si es 'new' se actualiza con el ID real tras el primer guardado.
@@ -35,6 +38,8 @@ export const useProduct = (productId: string) => {
 
         onSuccess: (data: Product) => {
             productIdRef.current = data.id;
+
+            clearImages();
 
             // Invalidar cache products Queries
             queryClient.invalidateQueries({
