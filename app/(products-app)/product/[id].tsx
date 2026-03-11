@@ -90,7 +90,12 @@ const ProductScreen = () => {
         <Formik
             initialValues={product}
             // onSubmit={(productLike) => productMutation.mutate(productLike)} // ambos debiesen funcionar igual
-            onSubmit={productMutation.mutate}
+            onSubmit={(productLike) =>
+                productMutation.mutate({
+                    ...productLike,
+                    images: [...productLike.images, ...selectedImages],
+                })
+            }
         >
             {({ values, handleSubmit, handleChange, setFieldValue }) => (
                 <KeyboardAvoidingView
