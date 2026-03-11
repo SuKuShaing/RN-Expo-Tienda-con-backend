@@ -19,7 +19,7 @@ export const updateCreateProduct = (product: Partial<Product>) => {
  */
 const prepareImages = async (images: string[]): Promise<string[]> => {
     const fileImages = images.filter((image) => image.startsWith("file")); // sirve startsWith, includes entre otras
-    const currentImages = images.filter((image) => !image.includes("file"));
+    const currentImages = images.filter((image) => !image.startsWith("file"));
 
     if (fileImages.length > 0) {
         const uploadPromises = fileImages.map(uploadImage); // es lo mismo que fileImages.map(img => uploadImage(img))
